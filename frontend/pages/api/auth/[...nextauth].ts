@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import NextAuth from "next-auth";
 import EmailProvider from "next-auth/providers/email";
 import GoogleProvider from "next-auth/providers/google";
+import FacebookProvider from "next-auth/providers/facebook";
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import clientPromise from "../../../lib/mongodb";
 
@@ -25,7 +26,6 @@ declare module "next-auth" {
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
   // Do NOT call .db() here for the adapter — pass the clientPromise directly
   return NextAuth(req, res, {
-    debug: true,
     adapter: MongoDBAdapter(clientPromise),
     providers: [
       EmailProvider({
@@ -38,6 +38,21 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
           },
         },
         from: process.env.EMAIL_FROM,
+      }),
+      FacebookProvider({
+        clientId: process.env.FACEBOOK_CLIENT_ID!,
+        clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,
+        profile(profile) {
+          console.log("Facebook profile:", profile);
+          return {
+            id: profile.id,
+            email: profile.email,
+            image: profile.picture?.data?.url ?? null,
+            firstName: profile.first_name,
+            lastName: profile.last_name,
+            name: `${profile.first_name} ${profile.last_name}`,
+          };
+        },
       }),
       GoogleProvider({
         clientId: process.env.GOOGLE_CLIENT_ID!,

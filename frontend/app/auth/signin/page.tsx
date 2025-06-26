@@ -17,6 +17,7 @@ export default function SignIn() {
     const result = await signIn("email", {
       email,
       redirect: false,
+      callbackUrl: "/dashboard", // this is passed in the email magic link
     });
 
     if (result?.error) {
@@ -27,33 +28,60 @@ export default function SignIn() {
   };
 
   const handleGoogleSignIn = async () => {
-  const isPreview =
-    typeof window !== "undefined" &&
-    window.location.hostname.endsWith(".vercel.app") &&
-    !window.location.hostname.startsWith("jackhigh.vercel.app");
+    const isPreview =
+      typeof window !== "undefined" &&
+      window.location.hostname.endsWith(".vercel.app") &&
+      !window.location.hostname.startsWith("jackhigh.vercel.app");
 
-  const callbackUrl = "/dashboard"; // Always go to dashboard after login
+    const callbackUrl = "/dashboard"; // Always go to dashboard after login
 
-  if (isPreview) {
-    // Start sign-in without auto redirect
-    const result = await signIn("google", {
-      callbackUrl,
-    });
+    if (isPreview) {
+      // Start sign-in without auto redirect
+      const result = await signIn("google", {
+        callbackUrl,
+      });
 
-    if (result?.url) {
-      // Rewrite to production domain to ensure callback works
-      const prodUrl = new URL(result.url);
-      prodUrl.host = "jackhigh.vercel.app";
-      window.location.href = prodUrl.toString();
+      if (result?.url) {
+        // Rewrite to production domain to ensure callback works
+        const prodUrl = new URL(result.url);
+        prodUrl.host = "jackhigh.vercel.app";
+        window.location.href = prodUrl.toString();
+      } else {
+        console.error("Google sign-in failed:", result?.error);
+      }
     } else {
-      console.error("Google sign-in failed:", result?.error);
+      // Production or local: normal sign-in with callback
+      await signIn("google", { callbackUrl });
     }
-  } else {
-    // Production or local: normal sign-in with callback
-    await signIn("google", { callbackUrl });
-  }
-};
+  };
 
+  const handleFacebookSignIn = async () => {
+    const isPreview =
+      typeof window !== "undefined" &&
+      window.location.hostname.endsWith(".vercel.app") &&
+      !window.location.hostname.startsWith("jackhigh.vercel.app");
+
+    const callbackUrl = "/dashboard"; // Always go to dashboard after login
+
+    if (isPreview) {
+      // Start sign-in without auto redirect
+      const result = await signIn("facebook", {
+        callbackUrl,
+      });
+
+      if (result?.url) {
+        // Rewrite to production domain to ensure callback works
+        const prodUrl = new URL(result.url);
+        prodUrl.host = "jackhigh.vercel.app";
+        window.location.href = prodUrl.toString();
+      } else {
+        console.error("Facebook sign-in failed:", result?.error);
+      }
+    } else {
+      // Production or local: normal sign-in with callback
+      await signIn("facebook", { callbackUrl });
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
@@ -79,6 +107,14 @@ export default function SignIn() {
           className="px-4 py-2 bg-red-600 text-white rounded"
         >
           Sign in with Google
+        </button>
+        <button
+          type="button"
+          onClick={handleFacebookSignIn}
+          className="px-4 py-2 bg-blue-600 text-white rounded"
+          hidden
+        >
+          Sign in with Facebook
         </button>
         {message && <p className="mt-2">{message}</p>}
       </form>
