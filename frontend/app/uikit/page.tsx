@@ -3,10 +3,17 @@ import { NextPage } from "next";
 const UiKit: NextPage = () => {
   return (
     <div>
-      <div className="text-red-500 font-bold">Tailwind works!</div>
-      <p className="text-red-600">This text should be red</p>
-      <h1>UI Kit</h1>
-      <p>This is your home.</p>
+      <div>
+        <h1>UI Kit</h1>
+      </div>
+      <div>
+        <h1>Header 1</h1>
+        <h2>Header 2</h2>
+        <h3>Header 3</h3>
+        <h4>Header 4</h4>
+        <h5>Header 5</h5>
+        <h6>Header 6</h6>
+      </div>
     </div>
   );
 };

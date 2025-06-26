@@ -19,8 +19,10 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/jackhigh_logo_tiny.png" />
       </head>
-      <body>
-        <Providers>{children}</Providers>
+      <body className="flex justify-center">
+        <div className="w-full max-w-[750px] px-4">
+          <Providers>{children}</Providers>
+        </div>
       </body>
     </html>
   );
