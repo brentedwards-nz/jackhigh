@@ -21,9 +21,11 @@ const UiKit: NextPage = () => {
 
       <h1 className="bg-blue-500 text-white p-4 rounded">Buttons</h1>
       <Separator />
-      <Button variant="destructive">Destructive Button</Button>
-      <Button variant="default">Default Button</Button>
-      <Button variant="secondary">Secondary Button</Button>
+      <div className="flex flex-col space-y-4">
+        <Button variant="default">Default Button</Button>
+        <Button variant="secondary">Secondary Button</Button>
+        <Button variant="destructive">Destructive Button</Button>
+      </div>
     </div>
   );
 };
