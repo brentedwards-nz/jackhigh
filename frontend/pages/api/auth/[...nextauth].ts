@@ -24,8 +24,10 @@ declare module "next-auth" {
 }
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
-  // Do NOT call .db() here for the adapter — pass the clientPromise directly
   return NextAuth(req, res, {
+    session: {
+      strategy: "jwt",
+    },
     adapter: MongoDBAdapter(clientPromise),
     providers: [
       EmailProvider({
@@ -78,13 +80,11 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
     },
     callbacks: {
       async redirect({ url, baseUrl }) {
-        console.log("Redirect callback:", { url, baseUrl });
         if (url.startsWith(baseUrl)) return url;
         return baseUrl + "/dashboard";
       },
       async jwt({ token, user }) {
         if (user) {
-          console.log("JWT callback - user:", user);
           token.firstName = user.firstName;
           token.lastName = user.lastName;
         }
